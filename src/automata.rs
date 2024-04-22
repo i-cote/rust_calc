@@ -1,17 +1,21 @@
 use crate::state::State;
+use crate::lexer::Lexer;
 use State::*;
+
 
 use crate::state::TransitionResult;
 
-pub struct Automata {
+pub struct Automata<'a> {
     pub state_stack: Vec<State>,
+    lexer: Lexer<'a> 
 }
 
-impl Automata {
+impl <'a>Automata<'a> {
 
-    pub fn new() -> Self {
+    pub fn new(str: &'a String) -> Self {
         let mut _self = Self {
             state_stack: Vec::<State>::new(),
+            lexer: Lexer::new(str)
         };
         _self.state_stack.push(STATE0);
         _self
