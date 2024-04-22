@@ -1,6 +1,8 @@
 #![allow(non_snake_case)]
 use crate::automata::Automata;
 
+use crate::symbol::Symbol;
+
 
 use State::*;
 use TransitionResult::*;
@@ -43,71 +45,214 @@ impl State {
     }
 }
 
-fn transitSTATE0(automata: &mut Automata) -> TransitionResult {
-    println!("In state0 going to state1");
-    automata.state_stack.push(STATE1);
-    return PROCEED;
 
+fn transitSTATE0(automata: &mut Automata) -> TransitionResult {
+    if automata.is_non_t {
+        automata.state_stack.push(STATE1);
+        automata.is_non_t = false;
+        return PROCEED;
+    }
+    let sym = automata.lexer.consult();
+    match sym {
+        Symbol::INT(_) => {
+            automata.state_stack.push(STATE3);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        Symbol::OPEN_PAR => {
+            automata.state_stack.push(STATE2);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        _ => {
+            ERROR
+        }
+    }
 }
 
 fn transitSTATE1(automata: &mut Automata) -> TransitionResult {
-    println!("In state1 going to state2");
-    automata.state_stack.push(STATE2);
-    return PROCEED;
-
+    let sym = automata.lexer.consult();
+    match sym {
+        Symbol::ADD => {
+            automata.state_stack.push(STATE4);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        Symbol::MULT => {
+            automata.state_stack.push(STATE5);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        Symbol::END => {
+            END
+        }
+        _ => {
+            ERROR
+        }
+    }
 }
+
 
 fn transitSTATE2(automata: &mut Automata) -> TransitionResult {
-    println!("In state2 going to state3");
-    automata.state_stack.push(STATE3);
-    return PROCEED;
+    if automata.is_non_t {
+        automata.state_stack.push(STATE6);
+        automata.is_non_t = false;
+        return PROCEED;
+    }
+    let sym = automata.lexer.consult();
+    match sym {
+        Symbol::INT(_) => {
+            automata.state_stack.push(STATE3);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        Symbol::OPEN_PAR => {
+            automata.state_stack.push(STATE2);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        _ => {
+            ERROR
+        }
+    }
 
 }
 
-fn transitSTATE3(automata: &mut Automata) -> TransitionResult {
-    println!("In state3 going to state4");
-    automata.state_stack.push(STATE4);
-    return PROCEED;
 
+fn transitSTATE3(automata: &mut Automata) -> TransitionResult {
+    let sym = automata.lexer.consult();
+    match sym {
+       Symbol::ADD | Symbol::MULT | Symbol::CLOSE_PAR | Symbol::END => {
+        automata.state_stack.pop();
+        automata.is_non_t = true;
+        PROCEED
+       },
+       _ => {ERROR} 
+    }
 }
 
 fn transitSTATE4(automata: &mut Automata) -> TransitionResult {
-    println!("In state4 going to state5");
-    automata.state_stack.push(STATE5);
-    return PROCEED;
-
+    if automata.is_non_t {
+        automata.state_stack.push(STATE7);
+        automata.is_non_t = false;
+        return PROCEED;
+    }
+    let sym = automata.lexer.consult();
+    match sym {
+        Symbol::INT(_) => {
+            automata.state_stack.push(STATE3);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        Symbol::OPEN_PAR => {
+            automata.state_stack.push(STATE2);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        _ => {
+            ERROR
+        }
+    }
 }
 
-fn transitSTATE5(automata: &mut Automata) -> TransitionResult {
-    println!("In state5 going to state6");
-    automata.state_stack.push(STATE6);
-    return PROCEED;
 
+fn transitSTATE5(automata: &mut Automata) -> TransitionResult {
+    if automata.is_non_t {
+        automata.state_stack.push(STATE8);
+        automata.is_non_t = false;
+        return PROCEED;
+    }
+    let sym = automata.lexer.consult();
+    match sym {
+        Symbol::INT(_) => {
+            automata.state_stack.push(STATE3);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        Symbol::OPEN_PAR => {
+            automata.state_stack.push(STATE2);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        _ => {
+            ERROR
+        }
+    }
 }
 
 fn transitSTATE6(automata: &mut Automata) -> TransitionResult {
-    println!("In state6 going to state7");
-    automata.state_stack.push(STATE7);
-    return PROCEED;
-
+    let sym = automata.lexer.consult();
+    match sym {
+        Symbol::ADD => {
+            automata.state_stack.push(STATE4);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        Symbol::MULT => {
+            automata.state_stack.push(STATE5);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        Symbol::CLOSE_PAR => {
+            automata.state_stack.push(STATE9);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        _ => {
+            ERROR
+        }
+    }
 }
 
 fn transitSTATE7(automata: &mut Automata) -> TransitionResult {
-    println!("In state7 going to state8");
-    automata.state_stack.push(STATE8);
-    return PROCEED;
-
+    let sym = automata.lexer.consult();
+    match sym {
+        Symbol::MULT => {
+            automata.state_stack.push(STATE5);
+            automata.lexer.proceed();
+            PROCEED
+        },
+        Symbol::ADD | Symbol::CLOSE_PAR | Symbol::END => {
+            automata.state_stack.pop();
+            automata.state_stack.pop();
+            automata.state_stack.pop();
+            automata.is_non_t = true;
+            PROCEED
+        },
+       _ => {
+            ERROR
+        }, 
+    }
 }
 
 fn transitSTATE8(automata: &mut Automata) -> TransitionResult {
-    println!("In state8 going to state9");
-    automata.state_stack.push(STATE9);
-    return PROCEED;
-
+    let sym = automata.lexer.consult();
+    match sym {
+        Symbol::ADD | Symbol::MULT | Symbol::CLOSE_PAR | Symbol::END => {
+            automata.state_stack.pop();
+            automata.state_stack.pop();
+            automata.state_stack.pop();
+            automata.is_non_t = true;
+            PROCEED
+        },
+       _ => {
+            ERROR
+        }, 
+    }
 }
 
 fn transitSTATE9(automata: &mut Automata) -> TransitionResult {
-    println!("In state9 final state");
-    return END;
-
+    let sym = automata.lexer.consult();
+    match sym {
+        Symbol::ADD | Symbol::MULT | Symbol::CLOSE_PAR | Symbol::END => {
+            automata.state_stack.pop();
+            automata.state_stack.pop();
+            automata.state_stack.pop();
+            automata.is_non_t = true;
+            PROCEED
+        },
+       _ => {
+            ERROR
+        }, 
+    }
 }

@@ -7,7 +7,8 @@ use crate::state::TransitionResult;
 
 pub struct Automata<'a> {
     pub state_stack: Vec<State>,
-    lexer: Lexer<'a> 
+    pub lexer: Lexer<'a>,
+    pub is_non_t: bool,
 }
 
 impl <'a>Automata<'a> {
@@ -15,7 +16,8 @@ impl <'a>Automata<'a> {
     pub fn new(str: &'a String) -> Self {
         let mut _self = Self {
             state_stack: Vec::<State>::new(),
-            lexer: Lexer::new(str)
+            lexer: Lexer::new(str),
+            is_non_t: false,
         };
         _self.state_stack.push(STATE0);
         _self
