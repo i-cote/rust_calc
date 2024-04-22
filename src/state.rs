@@ -9,9 +9,9 @@ use TransitionResult::*;
 
 #[derive(PartialEq)]
 pub enum TransitionResult {
-    PROCEED,
+    RUNNING,
     ERROR,
-    END,
+    ACCEPT,
 }
 
 #[derive(Clone)]
@@ -50,19 +50,19 @@ fn transitSTATE0(automata: &mut Automata) -> TransitionResult {
     if automata.is_non_t {
         automata.state_stack.push(STATE1);
         automata.is_non_t = false;
-        return PROCEED;
+        return RUNNING;
     }
     let sym = automata.lexer.consult();
     match sym {
         Symbol::INT(_) => {
             automata.state_stack.push(STATE3);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING 
         },
         Symbol::OPEN_PAR => {
             automata.state_stack.push(STATE2);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING 
         },
         _ => {
             ERROR
@@ -76,15 +76,15 @@ fn transitSTATE1(automata: &mut Automata) -> TransitionResult {
         Symbol::ADD => {
             automata.state_stack.push(STATE4);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         Symbol::MULT => {
             automata.state_stack.push(STATE5);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         Symbol::END => {
-            END
+            ACCEPT
         }
         _ => {
             ERROR
@@ -97,19 +97,19 @@ fn transitSTATE2(automata: &mut Automata) -> TransitionResult {
     if automata.is_non_t {
         automata.state_stack.push(STATE6);
         automata.is_non_t = false;
-        return PROCEED;
+        return RUNNING;
     }
     let sym = automata.lexer.consult();
     match sym {
         Symbol::INT(_) => {
             automata.state_stack.push(STATE3);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         Symbol::OPEN_PAR => {
             automata.state_stack.push(STATE2);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         _ => {
             ERROR
@@ -125,7 +125,7 @@ fn transitSTATE3(automata: &mut Automata) -> TransitionResult {
        Symbol::ADD | Symbol::MULT | Symbol::CLOSE_PAR | Symbol::END => {
         automata.state_stack.pop();
         automata.is_non_t = true;
-        PROCEED
+        RUNNING
        },
        _ => {ERROR} 
     }
@@ -135,19 +135,19 @@ fn transitSTATE4(automata: &mut Automata) -> TransitionResult {
     if automata.is_non_t {
         automata.state_stack.push(STATE7);
         automata.is_non_t = false;
-        return PROCEED;
+        return RUNNING;
     }
     let sym = automata.lexer.consult();
     match sym {
         Symbol::INT(_) => {
             automata.state_stack.push(STATE3);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         Symbol::OPEN_PAR => {
             automata.state_stack.push(STATE2);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         _ => {
             ERROR
@@ -160,19 +160,19 @@ fn transitSTATE5(automata: &mut Automata) -> TransitionResult {
     if automata.is_non_t {
         automata.state_stack.push(STATE8);
         automata.is_non_t = false;
-        return PROCEED;
+        return RUNNING;
     }
     let sym = automata.lexer.consult();
     match sym {
         Symbol::INT(_) => {
             automata.state_stack.push(STATE3);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         Symbol::OPEN_PAR => {
             automata.state_stack.push(STATE2);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         _ => {
             ERROR
@@ -186,17 +186,17 @@ fn transitSTATE6(automata: &mut Automata) -> TransitionResult {
         Symbol::ADD => {
             automata.state_stack.push(STATE4);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         Symbol::MULT => {
             automata.state_stack.push(STATE5);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         Symbol::CLOSE_PAR => {
             automata.state_stack.push(STATE9);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         _ => {
             ERROR
@@ -210,14 +210,14 @@ fn transitSTATE7(automata: &mut Automata) -> TransitionResult {
         Symbol::MULT => {
             automata.state_stack.push(STATE5);
             automata.lexer.proceed();
-            PROCEED
+            RUNNING
         },
         Symbol::ADD | Symbol::CLOSE_PAR | Symbol::END => {
             automata.state_stack.pop();
             automata.state_stack.pop();
             automata.state_stack.pop();
             automata.is_non_t = true;
-            PROCEED
+            RUNNING
         },
        _ => {
             ERROR
@@ -233,7 +233,7 @@ fn transitSTATE8(automata: &mut Automata) -> TransitionResult {
             automata.state_stack.pop();
             automata.state_stack.pop();
             automata.is_non_t = true;
-            PROCEED
+            RUNNING
         },
        _ => {
             ERROR
@@ -249,7 +249,7 @@ fn transitSTATE9(automata: &mut Automata) -> TransitionResult {
             automata.state_stack.pop();
             automata.state_stack.pop();
             automata.is_non_t = true;
-            PROCEED
+            RUNNING
         },
        _ => {
             ERROR
