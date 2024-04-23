@@ -213,6 +213,7 @@ fn transitSTATE7(automata: &mut Automata) -> TransitionResult {
             RUNNING
         },
         Symbol::ADD | Symbol::CLOSE_PAR | Symbol::END => {
+            automata.lexer.reduce(Symbol::ADD);
             automata.state_stack.pop();
             automata.state_stack.pop();
             automata.state_stack.pop();
@@ -229,6 +230,7 @@ fn transitSTATE8(automata: &mut Automata) -> TransitionResult {
     let sym = automata.lexer.consult();
     match sym {
         Symbol::ADD | Symbol::MULT | Symbol::CLOSE_PAR | Symbol::END => {
+            automata.lexer.reduce(Symbol::MULT);
             automata.state_stack.pop();
             automata.state_stack.pop();
             automata.state_stack.pop();
@@ -245,6 +247,7 @@ fn transitSTATE9(automata: &mut Automata) -> TransitionResult {
     let sym = automata.lexer.consult();
     match sym {
         Symbol::ADD | Symbol::MULT | Symbol::CLOSE_PAR | Symbol::END => {
+            automata.lexer.reduce(Symbol::CLOSE_PAR);
             automata.state_stack.pop();
             automata.state_stack.pop();
             automata.state_stack.pop();

@@ -3,7 +3,6 @@ mod automata;
 mod lexer;
 mod symbol;
 use automata::Automata;
-use state::TransitionResult::*;
 use std::io::stdin;
 fn main() {
 
@@ -14,11 +13,13 @@ fn main() {
 
     let mut automata = Automata::new(&input);
 
-    while automata.step() == RUNNING {}
+    let result = automata.compute();
 
-    if automata.step() == ACCEPT {
-        println!("The automata executed successfully");
-    } else {
-        println!("The automata encountered an error");
-    }
+    if result.is_some() {
+        println!("{}",result.unwrap());
+     } else {
+        println!("Erroneous expression");
+     }
+
+
 }
